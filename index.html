@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Memory Duel: KV Cache vs. BDH Synaptic Plasticity</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
@@ -38,7 +41,9 @@
     </div>
 
     <!-- Interactive Controls -->
-    <div class="controls-grid">
+    <div class="main-layout-grid">
+    <div class="sidebar-controls">
+      <div class="controls-grid">
       <div class="control-card">
         <div class="control-header">
           <span class="control-label">Total Sequence Length (Tokens)</span>
@@ -78,8 +83,21 @@
         </select>
         <div class="control-desc">Select which key to probe to test retention across time.</div>
       </div>
+      <div class="control-card">
+        <div class="control-header">
+          <span class="control-label">Advanced Architecture</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-gating"> Enable Smart Gating (Learned Decay)
+        </label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-multihead"> Enable Multi-Head Memory (4 Heads)
+        </label>
+        <div class="control-desc" style="margin-top: 8px;">Explore post-transformer variants.</div>
+      </div>
     </div>
 
+    </div>
     <!-- Arena Split: Model X vs Model Y -->
     <div class="arena-grid">
       <!-- Model X: Standard Transformer -->
@@ -152,7 +170,7 @@
             <div class="bar-track">
               <div class="bar-fill fill-y" id="bdh-bar" style="width: 5%;"></div>
             </div>
-            <div style="font-size: 0.75rem; color: var(--accent-emerald); margin-top: 8px;">✓ Bounded fixed allocation: Never crashes with unbounded length.</div>
+            <div style="font-size: 0.75rem; color: var(--accent-emerald); margin-top: 8px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;"><polyline points="20 6 9 17 4 12"></polyline></svg>Bounded fixed allocation: Never crashes with unbounded length.</div>
           </div>
 
           <!-- Synaptic Matrix Heatmap Visualizer -->
@@ -180,6 +198,70 @@
             </div>
           </div>
         </div>
+      </div>
+      <!-- Model Z: State Space Model (Mamba) -->
+      <div class="model-column col-z">
+        <div class="model-col-header">
+          <div>
+            <div class="model-title">Model Z: State Space (Mamba)</div>
+            <div class="model-subtitle">Selective Continuous-Time Matrix</div>
+          </div>
+          <span class="complexity-pill pill-z">O(d &times; N) Space</span>
+        </div>
+
+        <div class="model-body">
+          <!-- Memory Gauge -->
+          <div class="meter-card">
+            <div class="meter-header">
+               <span class="meter-label">GPU Memory Footprint</span>
+               <span class="meter-number num-z" id="ssm-mem-text">24.0 KB (Fixed)</span>
+            </div>
+            <div class="bar-track">
+               <div class="bar-fill fill-z" id="ssm-bar" style="width: 7%;"></div>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--accent-cyan); margin-top: 8px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;"><polyline points="20 6 9 17 4 12"></polyline></svg>Bounded allocation, maintains latent state.</div>
+          </div>
+
+          <!-- SSM Matrix Heatmap Visualizer -->
+          <div class="viz-card">
+            <div class="viz-title">Latent State (h<sub>t</sub> &isin; ℝ<sup>32</sup> channel expanded)</div>
+            <canvas id="canvas-ssm" width="400" height="220"></canvas>
+          </div>
+
+          <!-- Mathematical Formula -->
+          <div class="math-box">
+            <div class="math-title">Selective State Update</div>
+            <div class="math-eq"><i>h<sub>t</sub></i> = A <i>h</i><sub><i>t</i>&minus;1</sub> + B <i>x<sub>t</sub></i></div>
+            <div class="math-eq"><i>y<sub>t</sub></i> = C <i>h<sub>t</sub></i></div>
+          </div>
+
+          <!-- Recall Accuracy -->
+          <div class="recall-card">
+            <div class="meter-header">
+              <span class="meter-label">Retrieval Fidelity</span>
+              <span class="fidelity-badge badge-blurred" id="ssm-fidelity-badge">Evaluating</span>
+            </div>
+            <div class="recall-score-row">
+              <span class="score-val" id="ssm-score" style="color: var(--accent-cyan);">0.000</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      </div>
+
+    <!-- Slow-Motion Visualizer -->
+    <div class="visualizer-container">
+      <div class="visualizer-title">
+        <span>Slow-Motion Outer Product Visualizer (Value &times; Key<sup>T</sup>)</span>
+        <button class="btn-preset" id="btn-animate" style="padding: 4px 12px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>Play Step-by-Step</button>
+      </div>
+      <div class="visualizer-canvas-wrapper">
+        <canvas id="canvas-anim" width="600" height="300"></canvas>
+      </div>
+      <div style="color: var(--text-muted); font-size: 0.9rem; text-align: center; margin-top: 12px;">
+        <span id="anim-status-text">Click play to watch a token bind into the memory matrix in real-time.</span>
       </div>
     </div>
 
