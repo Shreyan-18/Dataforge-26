@@ -343,7 +343,7 @@ function renderKVCanvas() {
   const blockWidth = (w - 30) / 10;
   const blockHeight = (h - 40) / 8;
 
-  ctx.fillStyle = '#a1a1aa'; ctx.font = '11px sans-serif'; ctx.fillText(`Tokens buffered: ${totalSeqLength.toLocaleString()} tokens`, 15, 20);
+  ctx.fillStyle = '#ffffff'; ctx.font = '11px sans-serif'; ctx.fillText(`Tokens buffered: ${totalSeqLength.toLocaleString()} tokens`, 15, 20);
 
   let drawn = 0;
   for (let row = 0; row < 8; row++) {
@@ -355,9 +355,9 @@ function renderKVCanvas() {
 
       // Color based on whether it's a key fact or distractor
       if (drawn % Math.max(1, Math.floor(blocksToDraw / numFacts)) === 0) {
-        ctx.fillStyle = '#fb7185'; // Fact token (pink)
+        ctx.fillStyle = '#ffffff'; // Fact token (pink)
       } else {
-        ctx.fillStyle = '#27272a'; // Filler token (gray)
+        ctx.fillStyle = '#DFF8EB'; // Filler token (gray)
       }
 
       roundRect(ctx, x, y, blockWidth - 4, blockHeight - 4, 3);
@@ -366,12 +366,12 @@ function renderKVCanvas() {
   }
 
   // Draw legend
-  ctx.fillStyle = '#fb7185';
+  ctx.fillStyle = '#ffffff';
   ctx.fillRect(15, h - 14, 8, 8);
   ctx.fillStyle = '#94a3b8';
   ctx.fillText('Target Facts', 28, h - 7);
 
-  ctx.fillStyle = '#27272a';
+  ctx.fillStyle = '#DFF8EB';
   ctx.fillRect(110, h - 14, 8, 8);
   ctx.fillStyle = '#94a3b8';
   ctx.fillText('Distractor Tokens', 123, h - 7);
@@ -406,11 +406,11 @@ function renderBDHCanvas() {
       if (norm > 0) {
         // Positive synaptic connection: glows Cyan / Emerald
         const alpha = Math.min(1, Math.abs(norm));
-        ctx.fillStyle = `rgba(45, 212, 191, ${alpha.toFixed(2)})`;
+        ctx.fillStyle = `rgba(251, 139, 36, ${alpha.toFixed(2)})`;
       } else {
         // Negative / inhibitory synaptic connection: glows Purple
         const alpha = Math.min(1, Math.abs(norm));
-        ctx.fillStyle = `rgba(192, 132, 252, ${alpha.toFixed(2)})`;
+        ctx.fillStyle = `rgba(15, 76, 92, ${alpha.toFixed(2)})`;
       }
 
       roundRect(ctx, offsetX + c * cellSize + 0.5, offsetY + r * cellSize + 0.5, cellSize - 1.5, cellSize - 1.5, 2);
@@ -564,7 +564,7 @@ function renderSSMCanvas() {
     const barH = Math.abs(val) * maxH;
     const y = val > 0 ? (h/2 - barH) : h/2;
     
-    ctx.fillStyle = val > 0 ? 'rgba(45, 212, 191, 0.8)' : 'rgba(192, 132, 252, 0.8)';
+    ctx.fillStyle = val > 0 ? 'rgba(251, 139, 36, 0.8)' : 'rgba(15, 76, 92, 0.8)';
     roundRect(ctx, 20 + i * barWidth, y, barWidth - 3, barH, 2);
   }
 
@@ -597,7 +597,7 @@ function startAnimation() {
     for(let r=0; r<10; r++) {
        for(let c=0; c<10; c++) {
           let alpha = Math.min(1, frame / 100);
-          ctx.fillStyle = `rgba(45, 212, 191, ${alpha * Math.random()})`;
+          ctx.fillStyle = `rgba(251, 139, 36, ${alpha * Math.random()})`;
           ctx.fillRect(100 + c*20, 40 + r*20, 18, 18);
        }
     }
@@ -611,4 +611,319 @@ function startAnimation() {
     }
   }
   draw();
+}
+
+
+// --- WEBGPU COMPUTE ENGINE ---
+let device = null;
+let computePipeline = null;
+
+async function initWebGPU() {
+    const statusText = document.getElementById('webgpu-status');
+    if (!navigator.gpu) {
+        statusText.innerText = "Error: WebGPU not supported in this browser.";
+        document.getElementById('webgpu-toggle').checked = false;
+        return false;
+    }
+    
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        if (!adapter) throw new Error("No adapter found");
+        device = await adapter.requestDevice();
+        
+        // WGSL Shader for Matrix Addition and Decay (W = W * decay + V * K^T)
+        // Simplified for 1D demonstration arrays
+        const shaderCode = `
+          @group(0) @binding(0) var<storage, read_write> matrixW: array<f32>;
+          @group(0) @binding(1) var<storage, read> vectorV: array<f32>;
+          @group(0) @binding(2) var<storage, read> vectorK: array<f32>;
+          @group(0) @binding(3) var<uniform> decay: f32;
+
+          @compute @workgroup_size(64)
+          fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
+              let idx = global_id.x;
+              if (idx >= arrayLength(&matrixW)) {
+                  return;
+              }
+              
+              // In a real d x d matrix, idx = row * d + col
+              // For simplicity in this 1D visualizer, we just simulate the outer product dimension scale
+              let valW = matrixW[idx];
+              let valV = vectorV[idx % 32];
+              let valK = vectorK[idx % 32];
+              
+              // W = W * decay + outer_product
+              matrixW[idx] = (valW * decay) + (valV * valK);
+          }
+        `;
+
+        const module = device.createShaderModule({ code: shaderCode });
+        computePipeline = device.createComputePipeline({
+            layout: 'auto',
+            compute: { module, entryPoint: 'main' }
+        });
+        
+        statusText.innerText = "Active: Executing matrix math on local GPU.";
+        statusText.style.color = "var(--accent-cyan)";
+        return true;
+    } catch (e) {
+        statusText.innerText = "Failed to initialize WebGPU: " + e.message;
+        document.getElementById('webgpu-toggle').checked = false;
+        return false;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.getElementById('webgpu-toggle');
+    if(toggle) {
+        toggle.addEventListener('change', async (e) => {
+            if(e.target.checked) {
+                document.getElementById('webgpu-status').innerText = "Initializing WebGPU...";
+                await initWebGPU();
+            } else {
+                document.getElementById('webgpu-status').innerText = "Off: Simulating matrix math in JavaScript.";
+                document.getElementById('webgpu-status').style.color = "var(--text-muted)";
+                device = null;
+            }
+        });
+    }
+});
+
+
+// --- Scrollytelling Engine ---
+function animateSlider(sliderId, targetValue, duration) {
+    const slider = document.getElementById(sliderId);
+    if(!slider) return;
+    
+    // For logarithmic slider (length)
+    let isLog = sliderId === 'length-slider';
+    
+    let startValue = parseFloat(slider.value);
+    let diff = targetValue - startValue;
+    const startTime = performance.now();
+    
+    function step(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 4); // easeOutQuart
+        
+        slider.value = startValue + diff * ease;
+        slider.dispatchEvent(new Event('input'));
+        
+        if (progress < 1) {
+            requestAnimationFrame(step);
+        }
+    }
+    requestAnimationFrame(step);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    
+    const storyContainer = document.getElementById('story-container');
+    const steps = document.querySelectorAll('.story-step');
+    
+    if(!storyContainer || steps.length === 0) return;
+    
+    const observerOptions = {
+        root: storyContainer,
+        rootMargin: '-30% 0px -30% 0px',
+        threshold: 0
+    };
+    
+    // --- Tab Switching Logic ---
+    const tabSandbox = document.getElementById('tab-sandbox');
+    const tabStory = document.getElementById('tab-story');
+    const containerSandbox = document.getElementById('controls-grid');
+    const containerStory = document.getElementById('story-container');
+
+    if (tabSandbox && tabStory) {
+        tabSandbox.addEventListener('click', () => {
+            tabSandbox.style.background = 'var(--bg-hover)';
+            tabSandbox.style.color = 'var(--text-main)';
+            tabStory.style.background = 'transparent';
+            tabStory.style.color = 'var(--text-muted)';
+            
+            containerSandbox.style.display = 'flex';
+            containerStory.style.display = 'none';
+        });
+
+        tabStory.addEventListener('click', () => {
+            tabStory.style.background = 'var(--bg-hover)';
+            tabStory.style.color = 'var(--text-main)';
+            tabSandbox.style.background = 'transparent';
+            tabSandbox.style.color = 'var(--text-muted)';
+            
+            containerSandbox.style.display = 'none';
+            containerStory.style.display = 'block';
+        });
+    }
+
+
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Remove active from all
+                
+                steps.forEach(s => {
+                    s.style.opacity = '0.3';
+                    s.style.transform = 'scale(1.0)';
+                    s.style.borderColor = 'var(--border-color)';
+                });
+
+                // Add active to current
+                
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'scale(1.02)';
+                entry.target.style.borderColor = 'var(--accent-rose)';
+
+                
+                const stepNum = entry.target.getAttribute('data-step');
+                
+                // Execute Step Logic
+                if (stepNum === '1') {
+                    animateSlider('slider-seq', Math.log10(1000), 1000);
+                    animateSlider('slider-facts', 10, 1000);
+                    animateSlider('slider-decay', 0.9995, 1000);
+                } 
+                else if (stepNum === '2') {
+                    animateSlider('slider-seq', Math.log10(100000), 1500);
+                    animateSlider('slider-facts', 10, 1000);
+                    animateSlider('slider-decay', 0.9995, 1000);
+                }
+                else if (stepNum === '3') {
+                    animateSlider('slider-seq', Math.log10(100000), 1000);
+                    animateSlider('slider-facts', 45, 1500);
+                    animateSlider('slider-decay', 0.9995, 1000);
+                }
+                else if (stepNum === '4') {
+                    animateSlider('slider-seq', Math.log10(100000), 1000);
+                    animateSlider('slider-facts', 80, 1500); 
+                    animateSlider('slider-decay', 0.9995, 1000);
+                }
+                else if (stepNum === '5') {
+                    animateSlider('slider-seq', Math.log10(100000), 1000);
+                    animateSlider('slider-facts', 80, 1000);
+                    animateSlider('slider-decay', 0.9000, 1500); 
+                }
+            }
+        });
+    }, observerOptions);
+    
+    steps.forEach(step => observer.observe(step));
+
+    // Force initial render so canvases aren't black
+    setTimeout(() => {
+        const initSlider = document.getElementById('slider-seq');
+        if (initSlider) {
+            initSlider.dispatchEvent(new Event('input'));
+        }
+    }, 100);
+});
+
+
+// --- OUTER PRODUCT ANIMATION ---
+const btnAnimate = document.getElementById('btn-animate');
+const canvasAnim = document.getElementById('canvas-anim');
+const animStatusText = document.getElementById('anim-status-text');
+
+if (btnAnimate && canvasAnim) {
+    let animCtx = canvasAnim.getContext('2d');
+    let isAnimating = false;
+    let animStartTime = 0;
+
+    btnAnimate.addEventListener('click', () => {
+        if (isAnimating) return;
+        isAnimating = true;
+        animStartTime = performance.now();
+        requestAnimationFrame(renderAnimation);
+    });
+
+    function renderAnimation(currentTime) {
+        const elapsed = currentTime - animStartTime;
+        const duration = 6000; // 6 seconds total
+        const progress = Math.min(elapsed / duration, 1);
+
+        animCtx.clearRect(0, 0, canvasAnim.width, canvasAnim.height);
+        
+        // Define sizes
+        const d = 8; // 8x8 matrix
+        const cellSize = 20;
+        const matrixX = 250;
+        const matrixY = 80;
+        
+        // Phase 1: Show Vectors (0 - 0.2)
+        // Phase 2: Multiply/Grid appears (0.2 - 0.5)
+        // Phase 3: Add to W Matrix (0.5 - 0.8)
+        // Phase 4: Done (0.8 - 1.0)
+        
+        let vAlpha = 1;
+        let kAlpha = 1;
+        let gridAlpha = 0;
+        let wAlpha = 1;
+        
+        if (progress < 0.2) {
+            animStatusText.innerText = "Step 1: Extracting Value (V) and Key (K) vectors for the new word.";
+            gridAlpha = 0;
+        } else if (progress < 0.5) {
+            animStatusText.innerText = "Step 2: Outer Product (V ⊗ K^T). Multiplying every element to create a connection grid.";
+            gridAlpha = (progress - 0.2) / 0.3;
+        } else if (progress < 0.8) {
+            animStatusText.innerText = "Step 3: Adding the new connection grid on top of the old Memory Matrix (W).";
+            gridAlpha = 1;
+        } else {
+            animStatusText.innerText = "Done! The word is now physically embedded into the fixed-size matrix.";
+            gridAlpha = 1;
+            vAlpha = 1 - (progress - 0.8)/0.2;
+            kAlpha = vAlpha;
+        }
+
+        // Draw Vector V (Column)
+        animCtx.globalAlpha = vAlpha;
+        animCtx.fillStyle = '#fb8b24'; // Orange
+        for(let i=0; i<d; i++) {
+            animCtx.fillRect(matrixX - 40, matrixY + i*cellSize, cellSize-2, cellSize-2);
+        }
+        animCtx.fillStyle = '#fff';
+        animCtx.font = '12px sans-serif';
+        animCtx.fillText('V', matrixX - 35, matrixY - 10);
+
+        // Draw Vector K^T (Row)
+        animCtx.globalAlpha = kAlpha;
+        animCtx.fillStyle = '#9a031e'; // Crimson
+        for(let j=0; j<d; j++) {
+            animCtx.fillRect(matrixX + j*cellSize, matrixY - 40, cellSize-2, cellSize-2);
+        }
+        animCtx.fillStyle = '#fff';
+        animCtx.fillText('K^T', matrixX + 150, matrixY - 30);
+
+        // Draw Grid
+        animCtx.globalAlpha = gridAlpha;
+        for(let i=0; i<d; i++) {
+            for(let j=0; j<d; j++) {
+                // If progress > 0.5, it shifts color to indicate addition
+                if (progress > 0.5) {
+                    animCtx.fillStyle = `rgba(154, 3, 30, ${Math.random() * 0.8 + 0.2})`; // Memory matrix
+                } else {
+                    animCtx.fillStyle = `rgba(251, 139, 36, ${Math.random() * 0.8 + 0.2})`; // Outer product
+                }
+                animCtx.fillRect(matrixX + j*cellSize, matrixY + i*cellSize, cellSize-2, cellSize-2);
+            }
+        }
+        
+        animCtx.globalAlpha = 1.0;
+
+        if (progress < 1) {
+            requestAnimationFrame(renderAnimation);
+        } else {
+            isAnimating = false;
+        }
+    }
+    
+    // Draw initial state
+    animCtx.fillStyle = '#1e3a45';
+    animCtx.fillRect(250, 80, 8*20, 8*20);
+    animCtx.fillStyle = '#94a3b8';
+    animCtx.font = '14px sans-serif';
+    animCtx.fillText("Old Memory Matrix (W)", 230, 260);
 }

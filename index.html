@@ -28,23 +28,22 @@
     </header>
 
     <!-- Guided 60-Second Challenge Presets -->
-    <div class="preset-bar">
-      <div class="preset-title">
-        <span>⚡ 60-Second Guided Tests:</span>
-      </div>
-      <div class="preset-buttons">
-        <button class="btn-preset active" id="btn-novel">1. The Infinite Novel (Length Test)</button>
-        <button class="btn-preset" id="btn-crammed">2. The Crammed Exam (Interference Test)</button>
-        <button class="btn-preset" id="btn-decay">3. Synaptic Hygiene (Decay Test)</button>
-        <button class="btn-preset" id="btn-reset">Reset Defaults</button>
-      </div>
-    </div>
+    
 
     <!-- Interactive Controls -->
     <div class="main-layout-grid">
     <div class="sidebar-controls">
-      <div class="controls-grid">
-      <div class="control-card">
+
+      
+      <div class="sidebar-tabs" style="display: flex; gap: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 8px; border: 1px solid var(--border-color);">
+        <button class="tab-btn active" id="tab-sandbox" style="flex: 1; padding: 10px; border-radius: 6px; border: none; background: var(--bg-hover); color: var(--text-main); font-family: var(--font-display); font-weight: 600; cursor: pointer; transition: all 0.2s;">🛠️ Manual Sandbox</button>
+        <button class="tab-btn" id="tab-story" style="flex: 1; padding: 10px; border-radius: 6px; border: none; background: transparent; color: var(--text-muted); font-family: var(--font-display); font-weight: 600; cursor: pointer; transition: all 0.2s;">📖 Guided Story</button>
+      </div>
+      
+      <div class="sidebar-content" style="height: calc(100vh - 120px); overflow-y: hidden;">
+        
+        <div class="controls-grid" id="controls-grid" style="display: flex; flex-direction: column; gap: 24px; height: 100%; overflow-y: auto; padding-right: 16px; padding-bottom: 100px;">
+          <div class="control-card">
         <div class="control-header">
           <span class="control-label">Total Sequence Length (Tokens)</span>
           <span class="control-val" id="val-seq">10,000</span>
@@ -95,9 +94,47 @@
         </label>
         <div class="control-desc" style="margin-top: 8px;">Explore post-transformer variants.</div>
       </div>
+
+      
+
+    
+        </div>
+        
+        
+      <div class="story-container" id="story-container" style="display: none; height: 100%; overflow-y: auto; padding-right: 16px; padding-bottom: 20px;">
+        <h2 style="color: var(--text-main); font-family: var(--font-display); margin-bottom: 20px; font-size: 1.2rem;">📖 Guided Interactive Story</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 40px;">Scroll down inside this panel to see the simulation react.</p>
+        
+        <div class="story-step" data-step="1" style="padding: 24px; margin-bottom: 30vh; background: var(--bg-secondary); border-left: 4px solid var(--border-color); border-radius: 0 8px 8px 0; transition: all 0.6s;">
+          <h3 style="color: var(--text-main); margin-bottom: 12px; font-family: var(--font-display); font-size: 1.1rem;">1. The Context Window</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">Standard models save every word into a massive Key-Value Cache. At 1,000 tokens, everything runs smoothly. Memory is low.</p>
+        </div>
+        
+        <div class="story-step" data-step="2" style="padding: 24px; margin-bottom: 30vh; background: var(--bg-secondary); border-left: 4px solid var(--border-color); border-radius: 0 8px 8px 0; transition: all 0.6s;">
+          <h3 style="color: var(--text-main); margin-bottom: 12px; font-family: var(--font-display); font-size: 1.1rem;">2. The Infinite Novel</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">But what if we process a 100,000 token book? Watch the GPU memory. Standard Transformers crash (Out of Memory). But Dragon Hatchling (BDH) and Mamba survive because they use fixed-size matrices.</p>
+        </div>
+        
+        <div class="story-step" data-step="3" style="padding: 24px; margin-bottom: 30vh; background: var(--bg-secondary); border-left: 4px solid var(--border-color); border-radius: 0 8px 8px 0; transition: all 0.6s;">
+          <h3 style="color: var(--text-main); margin-bottom: 12px; font-family: var(--font-display); font-size: 1.1rem;">3. The Crammed Exam</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">If BDH has fixed memory, how does it remember? It physically overlays memories on top of each other. Let's force it to memorize 50 facts at once.</p>
+        </div>
+        
+        <div class="story-step" data-step="4" style="padding: 24px; margin-bottom: 30vh; background: var(--bg-secondary); border-left: 4px solid var(--border-color); border-radius: 0 8px 8px 0; transition: all 0.6s;">
+          <h3 style="color: var(--text-main); margin-bottom: 12px; font-family: var(--font-display); font-size: 1.1rem;">4. Interference Blur</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">Notice how Model Y's text becomes blurred? This is the fundamental trade-off. When the matrix reaches capacity, memories bleed into one another causing hallucinations.</p>
+        </div>
+        
+        <div class="story-step" data-step="5" style="padding: 24px; margin-bottom: 40px; background: var(--bg-secondary); border-left: 4px solid var(--border-color); border-radius: 0 8px 8px 0; transition: all 0.6s;">
+          <h3 style="color: var(--text-main); margin-bottom: 12px; font-family: var(--font-display); font-size: 1.1rem;">5. Synaptic Hygiene</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">To fix this, we apply a decay factor (forgetting old facts to learn new ones). Watch the blur disappear as the model selectively clears its memory.</p>
+        </div>
+      </div>
+
+        
+      </div>
     </div>
 
-    </div>
     <!-- Arena Split: Model X vs Model Y -->
     <div class="arena-grid">
       <!-- Model X: Standard Transformer -->
@@ -105,7 +142,7 @@
         <div class="model-col-header">
           <div>
             <div class="model-title">Model X: Standard Transformer</div>
-            <div class="model-subtitle">Explicit Key–Value (KV) Caching</div>
+            <div class="model-subtitle">Saves every single word perfectly, but memory grows forever.</div>
           </div>
           <span class="complexity-pill pill-x">O(T &times; d) Space</span>
         </div>
@@ -133,7 +170,7 @@
           <div class="math-box">
             <div class="math-title">Softmax Attention Read Rule</div>
             <div class="math-eq"><i>y</i> = softmax( (<i>q</i> &middot; <i>K</i><sup>T</sup>) / &radic;<i>d</i> ) &middot; <i>V</i></div>
-            <div class="math-subtext">Requires scanning every stored token pair (<i>k<sub>t</sub></i>, <i>v<sub>t</sub></i>) individually.</div>
+            <div class="math-subtext">Must look at every single past word one-by-one to answer a question. (<i>k<sub>t</sub></i>, <i>v<sub>t</sub></i>) individually.</div>
           </div>
 
           <!-- Recall Accuracy -->
@@ -155,7 +192,7 @@
         <div class="model-col-header">
           <div>
             <div class="model-title">Model Y: Dragon Hatchling (BDH)</div>
-            <div class="model-subtitle">Evolving Synaptic Plasticity Matrix</div>
+            <div class="model-subtitle">Uses a fixed-size memory box. New memories physically overlap old ones.</div>
           </div>
           <span class="complexity-pill pill-y">O(d²) Constant</span>
         </div>
@@ -204,7 +241,7 @@
         <div class="model-col-header">
           <div>
             <div class="model-title">Model Z: State Space (Mamba)</div>
-            <div class="model-subtitle">Selective Continuous-Time Matrix</div>
+            <div class="model-subtitle">Uses a fixed-size memory box, but slowly loses track of specific details.</div>
           </div>
           <span class="complexity-pill pill-z">O(d &times; N) Space</span>
         </div>
