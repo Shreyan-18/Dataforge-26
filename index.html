@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -26,28 +26,259 @@
               </div>
 
       
-      <div class="summary-box" style="margin-top: 24px; padding: 24px; background: rgba(15, 76, 92, 0.15); border: 1px solid var(--border-color); border-radius: 8px;">
-        <h2 style="color: var(--text-main); font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 16px;">📚 Beginner's Guide: How AI Remembers</h2>
-        
-        <div class="model-tabs" style="display: flex; gap: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 8px; border: 1px solid var(--border-color);">
-          <button class="model-tab-btn active" id="tab-model-x" style="flex: 1; padding: 10px; border-radius: 6px; border: none; background: rgba(154, 3, 30, 0.2); color: #fff; font-family: var(--font-display); font-weight: 600; cursor: pointer; transition: all 0.2s;">Model X: Standard Transformer</button>
-          <button class="model-tab-btn" id="tab-model-y" style="flex: 1; padding: 10px; border-radius: 6px; border: none; background: transparent; color: var(--text-muted); font-family: var(--font-display); font-weight: 600; cursor: pointer; transition: all 0.2s;">Model Y: Dragon Hatchling</button>
-          <button class="model-tab-btn" id="tab-model-z" style="flex: 1; padding: 10px; border-radius: 6px; border: none; background: transparent; color: var(--text-muted); font-family: var(--font-display); font-weight: 600; cursor: pointer; transition: all 0.2s;">Model Z: State Space (Mamba)</button>
+      <div class="summary-box" style="margin-top: 24px; padding: 26px; background: rgba(15, 76, 92, 0.15); border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h2 style="color: var(--text-main); font-family: var(--font-display); font-size: 1.35rem; margin: 0;">📚 Masterclass: How AI Memory Actually Works</h2>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">A complete, beginner-accessible conceptual breakdown from first principles to the post-transformer frontier.</div>
+          </div>
+          <span style="font-size: 0.8rem; color: var(--accent-cyan); font-weight: 600; background: rgba(6, 182, 212, 0.1); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(6, 182, 212, 0.25);">Click tabs to navigate</span>
         </div>
         
-        <div class="model-tab-content" id="content-model-x" style="display: block; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
-          <h3 style="color: var(--accent-rose); font-size: 1.05rem; margin-bottom: 8px;">Standard AI (The Hoarder)</h3>
-          <p>Most AI (like ChatGPT) uses a <strong>Key-Value Cache</strong>. Think of a <b>Key</b> as a sticky note label (e.g., "Paris") and a <b>Value</b> as the fact written on it ("Capital of France"). The AI saves every single word you type into an endless list. <br><br><b>The Trade-off:</b> It remembers everything perfectly, but if you upload a huge book, the list gets so long that the computer runs out of memory and crashes.</p>
+        <!-- Tab Buttons Bar -->
+        <div class="model-tabs" style="display: flex; gap: 8px; margin-bottom: 22px; background: rgba(0,0,0,0.25); padding: 6px; border-radius: 10px; border: 1px solid var(--border-color); overflow-x: auto;">
+          <button class="model-tab-btn active" id="tab-model-x" style="flex: 1; padding: 11px 16px; border-radius: 8px; border: none; background: rgba(154, 3, 30, 0.25); color: #fff; font-family: var(--font-display); font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap;">🟡 1. The Amnesia Problem (Transformer)</button>
+          <button class="model-tab-btn" id="tab-model-y" style="flex: 1; padding: 11px 16px; border-radius: 8px; border: none; background: transparent; color: var(--text-muted); font-family: var(--font-display); font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap;">🧠 2. The Brain Solution (BDH)</button>
+          <button class="model-tab-btn" id="tab-model-z" style="flex: 1; padding: 11px 16px; border-radius: 8px; border: none; background: transparent; color: var(--text-muted); font-family: var(--font-display); font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap;">📊 3. The Summarizer (Mamba)</button>
+          <button class="model-tab-btn" id="tab-model-toy" style="flex: 1; padding: 11px 16px; border-radius: 8px; border: none; background: transparent; color: var(--text-muted); font-family: var(--font-display); font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap;">🎮 4. Interactive Toy ("Dog = Max")</button>
+          <button class="model-tab-btn" id="tab-model-tradeoff" style="flex: 1; padding: 11px 16px; border-radius: 8px; border: none; background: transparent; color: var(--text-muted); font-family: var(--font-display); font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap;">⚖️ 5. The Trade-Off (Brain Blur)</button>
         </div>
         
-        <div class="model-tab-content" id="content-model-y" style="display: none; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
-          <h3 style="color: var(--accent-purple); font-size: 1.05rem; margin-bottom: 8px;">Dragon Hatchling BDH (The Brain)</h3>
-          <p>Instead of hoarding a massive list, <strong>BDH</strong> acts like a human brain. It uses a fixed-size "Memory Box" (a Matrix). When it learns a new fact, it writes it <em>directly over</em> the old facts, creating a web of physical connections. <br><br><b>The Trade-off:</b> It never runs out of memory, but if you cram too many facts into the box at once, the memories blur together and the AI hallucinates.</p>
+        <!-- Tab 1: Transformer / Amnesia (Elaborated) -->
+        <div class="model-tab-content" id="content-model-x" style="display: block; color: var(--text-muted); font-size: 0.95rem; line-height: 1.7;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <span style="background: rgba(244, 63, 94, 0.2); color: var(--accent-rose); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; padding: 3px 8px; border-radius: 4px;">Architectural Bottleneck</span>
+            <h3 style="color: #fff; font-size: 1.15rem; margin: 0;">The Illusion of Memory: Why Transformers Have Total Amnesia</h3>
+          </div>
+          <p>
+            When chatting with ChatGPT, Claude, or any standard Transformer model, it feels as if you are having a conversation with a friend who remembers what you said 15 minutes ago. <strong>In reality, the model has total, clinical amnesia.</strong> The millisecond an AI finishes generating a response token, its entire neural network resets to a blank slate. It retains zero internal state of who you are, what was discussed, or what it just said.
+          </p>
+
+          <div style="background: #0d1322; border: 1px solid #1e293b; border-radius: 8px; padding: 16px; margin: 16px 0;">
+            <div style="color: var(--accent-rose); font-weight: 700; font-size: 0.85rem; margin-bottom: 8px; letter-spacing: 0.5px;">THE "COPY-PASTE TRANSCRIPT" ILLUSION:</div>
+            <p style="margin-bottom: 10px;">How does it appear to remember? The chat interface silently executes an expensive sleight of hand on every single turn:</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 10px;">
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 12px;">
+                <div style="color: var(--accent-amber); font-weight: 700; font-size: 0.85rem;">Turn 1 (Prompt)</div>
+                <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 4px;">You: <em>"My dog is Max."</em><br>AI computes 4 words. Lightning-fast response, fraction of a millisecond.</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 12px;">
+                <div style="color: var(--accent-amber); font-weight: 700; font-size: 0.85rem;">Turn 10 (Question)</div>
+                <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 4px;">You: <em>"What should I feed him?"</em><br>App invisibly bundles: Q1 + A1 + Q2 + A2 ... + Q10. AI re-reads 2,000 words from scratch!</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 12px;">
+                <div style="color: var(--accent-rose); font-weight: 700; font-size: 0.85rem;">Turn 50 or Long Docs</div>
+                <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 4px;">The app bundles <strong>50,000+ words</strong>. To generate just <em>one single new word</em>, the GPU must re-read all 50,000 words.</div>
+              </div>
+            </div>
+          </div>
+
+          <h4 style="color: var(--text-main); margin: 16px 0 6px 0; font-size: 0.98rem;">The KV Cache: High-Speed Silicon Crutch</h4>
+          <p>
+            Re-calculating math for 50,000 words every time would make typing stutter to a crawl. To avoid this, Transformers use a <strong>Key-Value (KV) Cache</strong>: they keep every past word's mathematical identity saved as <em>Keys</em> (search tags) and <em>Values</em> (content) directly inside the GPU's ultra-expensive High-Bandwidth Memory (HBM/VRAM).
+          </p>
+
+          <div style="margin-top: 14px; padding: 14px; background: rgba(154, 3, 30, 0.15); border-left: 3px solid var(--accent-rose); border-radius: 6px; color: #cbd5e1;">
+            <b>The O(T) Memory Wall &amp; O(T²) Compute Explosions:</b>
+            <ul style="padding-left: 18px; margin: 8px 0 0 0; font-size: 0.88rem; line-height: 1.6;">
+              <li><strong>Linear Memory Bloat O(T):</strong> For a standard 70B parameter model with a 128k context window, caching past tokens requires <strong>~160 GB of GPU VRAM per single conversation</strong>. Multiply by 10,000 active users, and data centers run out of memory.</li>
+              <li><strong>Quadratic Attention O(T²):</strong> Because every new token must calculate an attention dot-product against <em>every previous token</em>, a conversation 10× longer requires <strong>100× more computation</strong>. At long contexts, the server crashes with <code>CUDA: Out of Memory (OOM)</code>.</li>
+            </ul>
+          </div>
         </div>
         
-        <div class="model-tab-content" id="content-model-z" style="display: none; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
-          <h3 style="color: var(--accent-cyan); font-size: 1.05rem; margin-bottom: 8px;">Mamba (The Summarizer)</h3>
-          <p>Unlike the Transformer, <strong>Mamba</strong> (a State Space Model) doesn't keep a giant list. Instead, it reads each word and constantly updates a single, fixed-size summary vector (a "Latent State"). <br><br><b>The Trade-off:</b> It is lightning fast and never crashes, but because it squeezes everything into one summary, it slowly loses track of specific exact details over time.</p>
+        <!-- Tab 2: BDH / The Brain (Elaborated) -->
+        <div class="model-tab-content" id="content-model-y" style="display: none; color: var(--text-muted); font-size: 0.95rem; line-height: 1.7;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <span style="background: rgba(168, 85, 247, 0.2); color: var(--accent-purple); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; padding: 3px 8px; border-radius: 4px;">Post-Transformer Breakthrough</span>
+            <h3 style="color: #fff; font-size: 1.15rem; margin: 0;">The Solution: Synapses Beat Sticky Notes</h3>
+          </div>
+          <p>
+           Imagine reading an 800-page epic. Your mind doesn't photocopy every sentence; instead, it weaves a living web of characters and emotions — all inside a skull of fixed size which does not expand with information.
+          </p>
+
+          <div style="background: #0d1322; border: 1px solid #1e293b; border-radius: 8px; padding: 16px; margin: 16px 0;">
+            <div style="color: var(--accent-purple); font-weight: 700; font-size: 0.85rem; margin-bottom: 8px; letter-spacing: 0.5px;">HEBBIAN SYNAPTIC PLASTICITY (DONALD HEBB, 1949):</div>
+            <p style="color: #cbd5e1; margin-bottom: 8px;">
+              In neuroscience, the cornerstone rule of biological learning is: <strong>"Neurons that fire together, wire together."</strong>
+            </p>
+            <p style="font-size: 0.88rem; color: #94a3b8; line-height: 1.6;">
+              When two concepts activate simultaneously &mdash; for example, the concept of a <em>dog</em> and the name <em>"Max"</em> &mdash; the junction between those neurons (the <strong>synapse</strong>) physically strengthens. Later, when you hear "dog", the electrical current naturally flows along the reinforced synaptic path directly to "Max". No sticky notes, no token lookup tables.
+            </p>
+          </div>
+
+          <h4 style="color: var(--text-main); margin: 16px 0 6px 0; font-size: 0.98rem;">How Dragon Hatchling (BDH) Replaces Attention</h4>
+          <p>
+            Pathway's <strong>Dragon Hatchling (BDH)</strong> does away with the unbounded token cache entirely. Instead, it maintains a single, fixed-size <strong>synaptic weight matrix</strong> W<sub>t</sub> &isin; ℝ<sup>d &times; d</sup> that lives in memory like an artificial cortex:
+          </p>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin: 12px 0;">
+            <div style="background: rgba(6, 182, 212, 0.05); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 6px; padding: 12px;">
+              <div style="color: var(--accent-cyan); font-weight: 700; font-size: 0.85rem; margin-bottom: 4px;">1. The Plasticity Write Step (Wiring)</div>
+              <div style="font-size: 0.85rem; color: #cbd5e1;">
+                When a token arrives with Key <code>k<sub>t</sub></code> and Value <code>v<sub>t</sub></code>, BDH computes their outer product (v<sub>t</sub> &otimes; k<sub>t</sub><sup>T</sup>) and adds it into the synapse grid:<br>
+                <code style="color: var(--accent-cyan); display: inline-block; margin-top: 6px; font-size: 0.82rem;">W<sub>t</sub> = &lambda; W<sub>t-1</sub> + (v<sub>t</sub> &otimes; k<sub>t</sub><sup>T</sup>)</code>
+              </div>
+            </div>
+            <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 6px; padding: 12px;">
+              <div style="color: var(--accent-emerald); font-weight: 700; font-size: 0.85rem; margin-bottom: 4px;">2. The Associative Read Step (Recall)</div>
+              <div style="font-size: 0.85rem; color: #cbd5e1;">
+                When asked a question with Query vector <code>q</code>, BDH does not search through thousands of tokens. It performs a single matrix-vector multiplication:<br>
+                <code style="color: var(--accent-emerald); display: inline-block; margin-top: 6px; font-size: 0.82rem;">Output y = W<sub>t</sub> &middot; q</code>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px; padding: 14px; background: rgba(168, 85, 247, 0.15); border-left: 3px solid var(--accent-purple); border-radius: 6px; color: #cbd5e1;">
+            <b>The True Infinite Horizon:</b> Because the matrix W is a fixed d &times; d grid of numbers (e.g. 64 &times; 64 = 4,096 floats &approx; 16 KB), its RAM footprint is strictly <strong>&Omicron;(d²) &mdash; completely constant!</strong> It consumes the exact same 16 KB whether you feed it 10 tokens or 10,000,000 tokens. It can run indefinitely without ever triggering an out-of-memory crash.
+          </div>
+        </div>
+        
+        <!-- Tab 3: Mamba / The Summarizer (Elaborated) -->
+        <div class="model-tab-content" id="content-model-z" style="display: none; color: var(--text-muted); font-size: 0.95rem; line-height: 1.7;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <span style="background: rgba(6, 182, 212, 0.2); color: var(--accent-cyan); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; padding: 3px 8px; border-radius: 4px;">State-Space Alternative</span>
+            <h3 style="color: #fff; font-size: 1.15rem; margin: 0;">Model Z: State Space (Mamba) &mdash; The Rolling Tape Recorder</h3>
+          </div>
+          <p>
+            Another major contender in the post-Transformer landscape is <strong>Mamba</strong>, which belongs to the family of <strong>State-Space Models (SSMs)</strong>. Born out of control systems engineering and signal processing, Mamba adopts a fundamentally different mindset from both Transformers and BDH.
+          </p>
+
+          <div style="background: #0d1322; border: 1px solid #1e293b; border-radius: 8px; padding: 16px; margin: 16px 0;">
+            <div style="color: var(--accent-cyan); font-weight: 700; font-size: 0.85rem; margin-bottom: 8px; letter-spacing: 0.5px;">HOW MAMBA PROCESSES INFORMATION:</div>
+            <p style="color: #cbd5e1; margin-bottom: 8px;">
+              Imagine text as an audio stream passing through a microphone into an analog cassette tape. Mamba updates a compact, 1-dimensional hidden vector on every word:
+            </p>
+            <div style="font-family: var(--font-mono); color: var(--accent-cyan); background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 4px; font-size: 0.85rem; margin: 8px 0;">
+              h<sub>t</sub> = A &middot; h<sub>t-1</sub> + B &middot; x<sub>t</sub> &nbsp;&nbsp;|&nbsp;&nbsp; y<sub>t</sub> = C &middot; h<sub>t</sub>
+            </div>
+            <p style="font-size: 0.88rem; color: #94a3b8;">
+              Matrix <strong>A</strong> acts as a selective forgetting gate, while matrix <strong>B</strong> controls how much new input is absorbed. It runs in blazing-fast linear &Omicron;(T) time and uses fixed &Omicron;(d) memory.
+            </p>
+          </div>
+
+          <h4 style="color: var(--text-main); margin: 16px 0 6px 0; font-size: 0.98rem;">The Bottleneck: 1D Vector Compression vs 2D Associative Matrix</h4>
+          <p>
+            If Mamba is so fast, why isn't the problem solved? Because squeezing 100,000 words into a single 1-dimensional list of numbers creates a <strong>lossy compression bottleneck</strong>.
+          </p>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 14px 0;">
+            <div style="background: rgba(6, 182, 212, 0.05); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 6px; padding: 12px;">
+              <div style="color: var(--accent-cyan); font-weight: 700; font-size: 0.85rem;">Mamba (1D Latent Vector)</div>
+              <p style="font-size: 0.82rem; color: #cbd5e1; margin-top: 4px;">
+                Superb at tracking tone, narrative flow, rhythm, and broad context over long books. However, it struggles with <em>exact pairwise associative retrieval</em> &mdash; e.g., recalling an arbitrary password or key-value pair buried deep in chapter 3.
+              </p>
+            </div>
+            <div style="background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 6px; padding: 12px;">
+              <div style="color: var(--accent-purple); font-weight: 700; font-size: 0.85rem;">BDH (2D Outer-Product Matrix)</div>
+              <p style="font-size: 0.82rem; color: #cbd5e1; margin-top: 4px;">
+                By storing a <strong>2D matrix (d &times; d)</strong>, BDH has quadratically more expressive degrees of freedom than a 1D vector. It stores full associative bindings (Key &harr; Value), enabling sharp factual recall while keeping memory bounded.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Interactive Vector Toy (Elaborated) -->
+        <div class="model-tab-content" id="content-model-toy" style="display: none; color: var(--text-muted); font-size: 0.95rem; line-height: 1.7;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <span style="background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; padding: 3px 8px; border-radius: 4px;">Hands-on Interactive Lab</span>
+            <h3 style="color: #fff; font-size: 1.15rem; margin: 0;">Vector Math in Action: How 4 Numbers Form Memories</h3>
+          </div>
+          <p>
+            How does an AI model physically store <em>"Dog = Max"</em> without writing the English letters "D-O-G" into a text file? It converts words into geometric vectors and stamps them into an associative matrix!
+          </p>
+
+          <div style="background: #0d1322; border: 1px solid #1e293b; border-radius: 8px; padding: 16px; margin: 14px 0;">
+            <div style="color: var(--accent-emerald); font-weight: 700; font-size: 0.85rem; margin-bottom: 6px;">OUR 2-FEATURE VECTOR UNIVERSE:</div>
+            <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 8px;">
+              Every concept is represented by 2 numbers: <strong>Feature 1 = Is it canine?</strong> &bull; <strong>Feature 2 = Is it a name?</strong>
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; font-family: var(--font-mono); font-size: 0.82rem; color: var(--accent-cyan);">
+              <div style="background: rgba(255,255,255,0.02); padding: 6px 10px; border-radius: 4px;">Dog = [ +1.0, -1.0 ] (Key)</div>
+              <div style="background: rgba(255,255,255,0.02); padding: 6px 10px; border-radius: 4px;">Max = [ -1.0, +1.0 ] (Val)</div>
+              <div style="background: rgba(255,255,255,0.02); padding: 6px 10px; border-radius: 4px;">Cat = [ +1.0, +1.0 ] (Key)</div>
+              <div style="background: rgba(255,255,255,0.02); padding: 6px 10px; border-radius: 4px;">Luna = [ +1.0, +1.0 ] (Val)</div>
+            </div>
+            <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 8px;">
+              <strong>The Math:</strong> Storing multiplies Value &times; Key<sup>T</sup> to form a 2&times;2 grid. Querying multiplies the Grid by the Query vector!
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0;">
+            <button class="toy-btn" onclick="toyStoreDogMax()">1. Store: "Dog = Max"</button>
+            <button class="toy-btn" onclick="toyStoreCatLuna()">2. Store: "Cat = Luna"</button>
+            <button class="toy-btn" onclick="toyQueryDog()">3. Query: "Who is Dog?"</button>
+            <button class="toy-btn" onclick="toyQueryCat()">4. Query: "Who is Cat?"</button>
+            <button class="toy-btn" style="background: #334155;" onclick="toyReset()">Reset Grid</button>
+          </div>
+
+          <div class="toy-display-grid">
+            <div class="toy-card">
+              <div class="toy-label">Synaptic Memory Grid (W)</div>
+              <div class="toy-matrix-view" id="toy-matrix-text">
+                [ 0.0,  0.0 ]<br>[ 0.0,  0.0 ]
+              </div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">2&times;2 Fixed Connection Matrix</div>
+            </div>
+
+            <div class="toy-card">
+              <div class="toy-label">Input Query Vector (q)</div>
+              <div class="toy-matrix-view" id="toy-query-text" style="color: var(--accent-purple);">
+                [ &mdash;,  &mdash; ]
+              </div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">Probe Vector sent into Grid</div>
+            </div>
+
+            <div class="toy-card">
+              <div class="toy-label">Retrieved Output (y = W &middot; q)</div>
+              <div class="toy-matrix-view" id="toy-output-text" style="color: var(--accent-emerald);">
+                [ &mdash;,  &mdash; ]
+              </div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">Associative Recall Result</div>
+            </div>
+          </div>
+
+          <div class="toy-status" id="toy-status-text">
+            👉 <strong>Getting Started:</strong> Click <em>"1. Store: Dog = Max"</em> to watch the blank grid multiply the vectors and store the memory!
+          </div>
+        </div>
+
+        <!-- Tab 5: The Trade-Off (Elaborated) -->
+        <div class="model-tab-content" id="content-model-tradeoff" style="display: none; color: var(--text-muted); font-size: 0.95rem; line-height: 1.7;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <span style="background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; padding: 3px 8px; border-radius: 4px;">Scientific Honesty</span>
+            <h3 style="color: #fff; font-size: 1.15rem; margin: 0;">The Engineering Catch: Interference Blur &amp; Synaptic Decay</h3>
+          </div>
+          <p>
+            In physics and computer science, there is no such thing as a free lunch. If a fixed-size 16 KB matrix can process an infinite book without running out of RAM, <strong>what is the penalty? Why hasn't everyone abandoned Transformers already?</strong>
+          </p>
+
+          <div style="background: #0d1322; border: 1px solid #1e293b; border-radius: 8px; padding: 16px; margin: 16px 0;">
+            <div style="color: var(--accent-amber); font-weight: 700; font-size: 0.85rem; margin-bottom: 8px; letter-spacing: 0.5px;">THE "OVERCROWDED WHITEBOARD" EFFECT (INTERFERENCE):</div>
+            <p style="color: #cbd5e1; margin-bottom: 8px;">
+              Picture a classroom whiteboard of fixed dimensions. If you write 3 phone numbers on it, there is plenty of whitespace, and every single digit is sharp and readable.
+            </p>
+            <p style="font-size: 0.88rem; color: #94a3b8; line-height: 1.6;">
+              Now imagine writing <strong>200 phone numbers on top of each other without ever using an eraser</strong>. Lines intersect, curves overlap, and soon the board becomes an illegible dark smudge. In associative memory theory (Hopfield capacity bounds), this is known as <strong>Catastrophic Interference (Crosstalk Noise)</strong>.
+            </p>
+          </div>
+
+          <h4 style="color: var(--text-main); margin: 16px 0 6px 0; font-size: 0.98rem;">The Solution: Synaptic Hygiene Through Forgetting (&lambda;)</h4>
+          <p>
+            How does your human brain avoid becoming an illegible whiteboard? <em>By actively forgetting!</em> You do not retain the exact license plate of the car that drove in front of you 3 weeks ago. By discarding irrelevant ancient details, your brain keeps its working memory sharp for today's tasks.
+          </p>
+
+          <p style="margin-top: 10px;">
+            BDH mimics biological forgetting with a <strong>Retention/Decay Factor (&lambda; &isin; [0.95, 0.9999])</strong>. On every single time step, the existing synaptic weights are scaled by &lambda; before adding new information:
+          </p>
+
+          <div style="font-family: var(--font-mono); color: var(--accent-amber); background: rgba(0,0,0,0.3); padding: 10px 14px; border-radius: 6px; font-size: 0.88rem; margin: 10px 0;">
+            W<sub>t</sub> = &lambda; &middot; W<sub>t-1</sub> + (v<sub>t</sub> &otimes; k<sub>t</sub><sup>T</sup>)
+          </div>
+
+          <div style="margin-top: 14px; padding: 14px; background: rgba(245, 158, 11, 0.15); border-left: 3px solid var(--accent-amber); border-radius: 6px; color: #cbd5e1;">
+            <b>The Big Takeaway:</b> Transformers give you <strong>100% photographic recall</strong>, but at the cost of crippling O(T) RAM growth and eventual OOM crash. BDH gives you <strong>infinite duration with strictly constant O(d²) RAM</strong>, but trades exact token recall for fuzzy associative recall when pushed beyond its synaptic capacity limit.
+          </div>
         </div>
       </div>
 

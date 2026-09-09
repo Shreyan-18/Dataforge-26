@@ -1,4 +1,4 @@
-﻿/**
+/**
  * The Memory Duel: Client-Side Simulation & Visualization Engine
  * Performs real linear algebra for KV Cache attention & BDH Hebbian plasticity.
  */
@@ -934,35 +934,127 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabX = document.getElementById('tab-model-x');
     const tabY = document.getElementById('tab-model-y');
     const tabZ = document.getElementById('tab-model-z');
+    const tabToy = document.getElementById('tab-model-toy');
+    const tabTradeoff = document.getElementById('tab-model-tradeoff');
     
     const contentX = document.getElementById('content-model-x');
     const contentY = document.getElementById('content-model-y');
     const contentZ = document.getElementById('content-model-z');
+    const contentToy = document.getElementById('content-model-toy');
+    const contentTradeoff = document.getElementById('content-model-tradeoff');
 
-    function resetTopTabs() {
-        if(tabX) { tabX.style.background = 'transparent'; tabX.style.color = 'var(--text-muted)'; }
-        if(tabY) { tabY.style.background = 'transparent'; tabY.style.color = 'var(--text-muted)'; }
-        if(tabZ) { tabZ.style.background = 'transparent'; tabZ.style.color = 'var(--text-muted)'; }
-        if(contentX) contentX.style.display = 'none';
-        if(contentY) contentY.style.display = 'none';
-        if(contentZ) contentZ.style.display = 'none';
+    const tabList = [
+      { tab: tabX, content: contentX, bg: 'rgba(154, 3, 30, 0.25)' },
+      { tab: tabY, content: contentY, bg: 'rgba(168, 85, 247, 0.25)' },
+      { tab: tabZ, content: contentZ, bg: 'rgba(6, 182, 212, 0.25)' },
+      { tab: tabToy, content: contentToy, bg: 'rgba(16, 185, 129, 0.25)' },
+      { tab: tabTradeoff, content: contentTradeoff, bg: 'rgba(245, 158, 11, 0.25)' }
+    ];
+
+    function selectTab(selected) {
+      tabList.forEach(item => {
+        if (item.tab) {
+          item.tab.style.background = 'transparent';
+          item.tab.style.color = 'var(--text-muted)';
+        }
+        if (item.content) {
+          item.content.style.display = 'none';
+        }
+      });
+      if (selected.tab) {
+        selected.tab.style.background = selected.bg;
+        selected.tab.style.color = '#fff';
+      }
+      if (selected.content) {
+        selected.content.style.display = 'block';
+      }
     }
 
-    if (tabX && tabY && tabZ) {
-        tabX.addEventListener('click', () => {
-            resetTopTabs();
-            tabX.style.background = 'rgba(154, 3, 30, 0.2)'; tabX.style.color = '#fff';
-            if(contentX) contentX.style.display = 'block';
-        });
-        tabY.addEventListener('click', () => {
-            resetTopTabs();
-            tabY.style.background = 'rgba(251, 139, 36, 0.2)'; tabY.style.color = '#fff';
-            if(contentY) contentY.style.display = 'block';
-        });
-        tabZ.addEventListener('click', () => {
-            resetTopTabs();
-            tabZ.style.background = 'rgba(227, 100, 20, 0.2)'; tabZ.style.color = '#fff';
-            if(contentZ) contentZ.style.display = 'block';
-        });
-    }
+    tabList.forEach(item => {
+      if (item.tab) {
+        item.tab.addEventListener('click', () => selectTab(item));
+      }
+    });
 });
+
+// --- 2x2 Synaptic Vector Toy State & Logic ---
+let toyW = [
+  [0, 0],
+  [0, 0]
+];
+
+function formatToyMatrix() {
+  const r0 = `[ ${toyW[0][0] >= 0 ? ' ' : ''}${toyW[0][0].toFixed(1)},  ${toyW[0][1] >= 0 ? ' ' : ''}${toyW[0][1].toFixed(1)} ]`;
+  const r1 = `[ ${toyW[1][0] >= 0 ? ' ' : ''}${toyW[1][0].toFixed(1)},  ${toyW[1][1] >= 0 ? ' ' : ''}${toyW[1][1].toFixed(1)} ]`;
+  return `${r0}<br>${r1}`;
+}
+
+function toyStoreDogMax() {
+  toyW[0][0] += -1;
+  toyW[0][1] += 1;
+  toyW[1][0] += 1;
+  toyW[1][1] += -1;
+
+  const mEl = document.getElementById("toy-matrix-text");
+  if (mEl) mEl.innerHTML = formatToyMatrix();
+  const qEl = document.getElementById("toy-query-text");
+  if (qEl) qEl.innerHTML = "[ &mdash;, &mdash; ]";
+  const oEl = document.getElementById("toy-output-text");
+  if (oEl) oEl.innerHTML = "[ &mdash;, &mdash; ]";
+  const sEl = document.getElementById("toy-status-text");
+  if (sEl) sEl.innerHTML = `✅ <strong>Stored "Dog = Max"!</strong> The vectors Dog [1, -1] and Max [-1, 1] multiplied into the grid. Notice how the numbers in the matrix adjusted to rewire this memory! Now try clicking <em>"3. Query: Who is Dog?"</em>`;
+}
+
+function toyStoreCatLuna() {
+  toyW[0][0] += 1;
+  toyW[0][1] += 1;
+  toyW[1][0] += 1;
+  toyW[1][1] += 1;
+
+  const mEl = document.getElementById("toy-matrix-text");
+  if (mEl) mEl.innerHTML = formatToyMatrix();
+  const qEl = document.getElementById("toy-query-text");
+  if (qEl) qEl.innerHTML = "[ &mdash;, &mdash; ]";
+  const oEl = document.getElementById("toy-output-text");
+  if (oEl) oEl.innerHTML = "[ &mdash;, &mdash; ]";
+  const sEl = document.getElementById("toy-status-text");
+  if (sEl) sEl.innerHTML = `✅ <strong>Stored "Cat = Luna"!</strong> Now BOTH facts ("Dog = Max" and "Cat = Luna") co-exist simultaneously inside the exact same 4 numbers!`;
+}
+
+function toyQueryDog() {
+  const q = [1, -1];
+  const out0 = toyW[0][0] * q[0] + toyW[0][1] * q[1];
+  const out1 = toyW[1][0] * q[0] + toyW[1][1] * q[1];
+
+  const qEl = document.getElementById("toy-query-text");
+  if (qEl) qEl.innerHTML = `[ 1.0, -1.0 ]<br><span style="font-size: 0.75rem; color: #94a3b8;">(Dog)</span>`;
+  const oEl = document.getElementById("toy-output-text");
+  if (oEl) oEl.innerHTML = `[ ${out0.toFixed(1)}, ${out1.toFixed(1)} ]<br><span style="font-size: 0.75rem; color: var(--accent-emerald); font-weight: 700;">&rArr; Max [-1, 1]!</span>`;
+  const sEl = document.getElementById("toy-status-text");
+  if (sEl) sEl.innerHTML = `🎯 <strong>Recall Success!</strong> Matrix multiplied by Dog [1, -1] = [${out0.toFixed(1)}, ${out1.toFixed(1)}]. Because the negative ratio matches [-1, 1], the network cleanly retrieved <strong>"Max"</strong> without reading any past text!`;
+}
+
+function toyQueryCat() {
+  const q = [1, 1];
+  const out0 = toyW[0][0] * q[0] + toyW[0][1] * q[1];
+  const out1 = toyW[1][0] * q[0] + toyW[1][1] * q[1];
+
+  const qEl = document.getElementById("toy-query-text");
+  if (qEl) qEl.innerHTML = `[ 1.0, 1.0 ]<br><span style="font-size: 0.75rem; color: #94a3b8;">(Cat)</span>`;
+  const oEl = document.getElementById("toy-output-text");
+  if (oEl) oEl.innerHTML = `[ ${out0.toFixed(1)}, ${out1.toFixed(1)} ]<br><span style="font-size: 0.75rem; color: var(--accent-emerald); font-weight: 700;">&rArr; Luna [1, 1]!</span>`;
+  const sEl = document.getElementById("toy-status-text");
+  if (sEl) sEl.innerHTML = `🎯 <strong>Recall Success!</strong> Matrix multiplied by Cat [1, 1] = [${out0.toFixed(1)}, ${out1.toFixed(1)}]. Matching positive ratio [1, 1] cleanly retrieved <strong>"Luna"</strong>!`;
+}
+
+function toyReset() {
+  toyW = [[0, 0], [0, 0]];
+  const mEl = document.getElementById("toy-matrix-text");
+  if (mEl) mEl.innerHTML = formatToyMatrix();
+  const qEl = document.getElementById("toy-query-text");
+  if (qEl) qEl.innerHTML = "[ 0.0, 0.0 ]";
+  const oEl = document.getElementById("toy-output-text");
+  if (oEl) oEl.innerHTML = "[ 0.0, 0.0 ]";
+  const sEl = document.getElementById("toy-status-text");
+  if (sEl) sEl.innerHTML = `🔄 <strong>Memory Cleared:</strong> The matrix is back to all zeros. Click <em>"1. Store: Dog = Max"</em> to start over!`;
+}
