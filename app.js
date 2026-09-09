@@ -927,3 +927,42 @@ if (btnAnimate && canvasAnim) {
     animCtx.font = '14px sans-serif';
     animCtx.fillText("Old Memory Matrix (W)", 230, 260);
 }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // --- Top Model Tabs Logic ---
+    const tabX = document.getElementById('tab-model-x');
+    const tabY = document.getElementById('tab-model-y');
+    const tabZ = document.getElementById('tab-model-z');
+    
+    const contentX = document.getElementById('content-model-x');
+    const contentY = document.getElementById('content-model-y');
+    const contentZ = document.getElementById('content-model-z');
+
+    function resetTopTabs() {
+        if(tabX) { tabX.style.background = 'transparent'; tabX.style.color = 'var(--text-muted)'; }
+        if(tabY) { tabY.style.background = 'transparent'; tabY.style.color = 'var(--text-muted)'; }
+        if(tabZ) { tabZ.style.background = 'transparent'; tabZ.style.color = 'var(--text-muted)'; }
+        if(contentX) contentX.style.display = 'none';
+        if(contentY) contentY.style.display = 'none';
+        if(contentZ) contentZ.style.display = 'none';
+    }
+
+    if (tabX && tabY && tabZ) {
+        tabX.addEventListener('click', () => {
+            resetTopTabs();
+            tabX.style.background = 'rgba(154, 3, 30, 0.2)'; tabX.style.color = '#fff';
+            if(contentX) contentX.style.display = 'block';
+        });
+        tabY.addEventListener('click', () => {
+            resetTopTabs();
+            tabY.style.background = 'rgba(251, 139, 36, 0.2)'; tabY.style.color = '#fff';
+            if(contentY) contentY.style.display = 'block';
+        });
+        tabZ.addEventListener('click', () => {
+            resetTopTabs();
+            tabZ.style.background = 'rgba(227, 100, 20, 0.2)'; tabZ.style.color = '#fff';
+            if(contentZ) contentZ.style.display = 'block';
+        });
+    }
+});
