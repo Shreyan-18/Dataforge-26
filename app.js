@@ -404,13 +404,13 @@ function renderBDHCanvas() {
       const norm = weight / maxWeight;
 
       if (norm > 0) {
-        // Positive synaptic connection: glows Cyan / Emerald
+        // Positive synaptic connection: glows Dragonfruit
         const alpha = Math.min(1, Math.abs(norm));
-        ctx.fillStyle = `rgba(251, 139, 36, ${alpha.toFixed(2)})`;
+        ctx.fillStyle = `rgba(255, 73, 158, ${alpha.toFixed(2)})`;
       } else {
-        // Negative / inhibitory synaptic connection: glows Purple
+        // Negative / inhibitory synaptic connection: Petal Pink
         const alpha = Math.min(1, Math.abs(norm));
-        ctx.fillStyle = `rgba(15, 76, 92, ${alpha.toFixed(2)})`;
+        ctx.fillStyle = `rgba(210, 100, 182, ${alpha.toFixed(2)})`;
       }
 
       roundRect(ctx, offsetX + c * cellSize + 0.5, offsetY + r * cellSize + 0.5, cellSize - 1.5, cellSize - 1.5, 2);
@@ -564,7 +564,7 @@ function renderSSMCanvas() {
     const barH = Math.abs(val) * maxH;
     const y = val > 0 ? (h/2 - barH) : h/2;
     
-    ctx.fillStyle = val > 0 ? 'rgba(251, 139, 36, 0.8)' : 'rgba(15, 76, 92, 0.8)';
+    ctx.fillStyle = val > 0 ? 'rgba(73, 182, 255, 0.8)' : 'rgba(210, 100, 182, 0.8)';
     roundRect(ctx, 20 + i * barWidth, y, barWidth - 3, barH, 2);
   }
 
@@ -880,21 +880,21 @@ if (btnAnimate && canvasAnim) {
 
         // Draw Vector V (Column)
         animCtx.globalAlpha = vAlpha;
-        animCtx.fillStyle = '#fb8b24'; // Orange
+        animCtx.fillStyle = '#ff499e'; // Dragonfruit
         for(let i=0; i<d; i++) {
             animCtx.fillRect(matrixX - 40, matrixY + i*cellSize, cellSize-2, cellSize-2);
         }
-        animCtx.fillStyle = '#fff';
+        animCtx.fillStyle = '#ffffff';
         animCtx.font = '12px sans-serif';
         animCtx.fillText('V', matrixX - 35, matrixY - 10);
 
         // Draw Vector K^T (Row)
         animCtx.globalAlpha = kAlpha;
-        animCtx.fillStyle = '#9a031e'; // Crimson
+        animCtx.fillStyle = '#49b6ff'; // Cool Sky
         for(let j=0; j<d; j++) {
             animCtx.fillRect(matrixX + j*cellSize, matrixY - 40, cellSize-2, cellSize-2);
         }
-        animCtx.fillStyle = '#fff';
+        animCtx.fillStyle = '#ffffff';
         animCtx.fillText('K^T', matrixX + 150, matrixY - 30);
 
         // Draw Grid
@@ -903,9 +903,9 @@ if (btnAnimate && canvasAnim) {
             for(let j=0; j<d; j++) {
                 // If progress > 0.5, it shifts color to indicate addition
                 if (progress > 0.5) {
-                    animCtx.fillStyle = `rgba(154, 3, 30, ${Math.random() * 0.8 + 0.2})`; // Memory matrix
+                    animCtx.fillStyle = `rgba(255, 73, 158, ${Math.random() * 0.8 + 0.2})`; // Memory matrix
                 } else {
-                    animCtx.fillStyle = `rgba(251, 139, 36, ${Math.random() * 0.8 + 0.2})`; // Outer product
+                    animCtx.fillStyle = `rgba(73, 182, 255, ${Math.random() * 0.8 + 0.2})`; // Outer product
                 }
                 animCtx.fillRect(matrixX + j*cellSize, matrixY + i*cellSize, cellSize-2, cellSize-2);
             }
@@ -921,9 +921,9 @@ if (btnAnimate && canvasAnim) {
     }
     
     // Draw initial state
-    animCtx.fillStyle = '#1e3a45';
+    animCtx.fillStyle = '#1c1833'; // Dark Lavender
     animCtx.fillRect(250, 80, 8*20, 8*20);
-    animCtx.fillStyle = '#94a3b8';
+    animCtx.fillStyle = '#b8b2d1';
     animCtx.font = '14px sans-serif';
     animCtx.fillText("Old Memory Matrix (W)", 230, 260);
 }
@@ -944,11 +944,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const contentTradeoff = document.getElementById('content-model-tradeoff');
 
     const tabList = [
-      { tab: tabX, content: contentX, bg: 'rgba(154, 3, 30, 0.25)' },
-      { tab: tabY, content: contentY, bg: 'rgba(168, 85, 247, 0.25)' },
-      { tab: tabZ, content: contentZ, bg: 'rgba(6, 182, 212, 0.25)' },
-      { tab: tabToy, content: contentToy, bg: 'rgba(16, 185, 129, 0.25)' },
-      { tab: tabTradeoff, content: contentTradeoff, bg: 'rgba(245, 158, 11, 0.25)' }
+      { tab: tabX, content: contentX, bg: 'rgba(255, 73, 158, 0.35)' },
+      { tab: tabY, content: contentY, bg: 'rgba(210, 100, 182, 0.35)' },
+      { tab: tabZ, content: contentZ, bg: 'rgba(73, 182, 255, 0.35)' },
+      { tab: tabToy, content: contentToy, bg: 'rgba(164, 128, 207, 0.35)' },
+      { tab: tabTradeoff, content: contentTradeoff, bg: 'rgba(119, 155, 231, 0.35)' }
     ];
 
     function selectTab(selected) {
@@ -963,7 +963,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       if (selected.tab) {
         selected.tab.style.background = selected.bg;
-        selected.tab.style.color = '#fff';
+        selected.tab.style.color = '#ffffff';
       }
       if (selected.content) {
         selected.content.style.display = 'block';

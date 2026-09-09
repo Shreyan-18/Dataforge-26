@@ -54,7 +54,7 @@
             When chatting with ChatGPT, Claude, or any standard Transformer model, it feels as if you are having a conversation with a friend who remembers what you said 15 minutes ago. <strong>In reality, the model has total, clinical amnesia.</strong> The millisecond an AI finishes generating a response token, its entire neural network resets to a blank slate. It retains zero internal state of who you are, what was discussed, or what it just said.
           </p>
 
-          <div style="background: #0d1322; border: 1px solid #1e293b; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <div style="background: rgba(18, 30, 43, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin: 16px 0;">
             <div style="color: var(--accent-rose); font-weight: 700; font-size: 0.85rem; margin-bottom: 8px; letter-spacing: 0.5px;">THE "COPY-PASTE TRANSCRIPT" ILLUSION:</div>
             <p style="margin-bottom: 10px;">How does it appear to remember? The chat interface silently executes an expensive sleight of hand on every single turn:</p>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 10px;">
@@ -97,13 +97,13 @@
            Imagine reading an 800-page epic. Your mind doesn't photocopy every sentence; instead, it weaves a living web of characters and emotions — all inside a skull of fixed size which does not expand with information.
           </p>
 
-          <div style="background: #0d1322; border: 1px solid #1e293b; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <div style="background: rgba(18, 30, 43, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin: 16px 0;">
             <div style="color: var(--accent-purple); font-weight: 700; font-size: 0.85rem; margin-bottom: 8px; letter-spacing: 0.5px;">HEBBIAN SYNAPTIC PLASTICITY (DONALD HEBB, 1949):</div>
             <p style="color: #cbd5e1; margin-bottom: 8px;">
-              In neuroscience, the cornerstone rule of biological learning is: <strong>"Neurons that fire together, wire together."</strong>
+              In neuroscience,it is said : <strong>"Neurons that fire together, wire together."</strong>
             </p>
             <p style="font-size: 0.88rem; color: #94a3b8; line-height: 1.6;">
-              When two concepts activate simultaneously &mdash; for example, the concept of a <em>dog</em> and the name <em>"Max"</em> &mdash; the junction between those neurons (the <strong>synapse</strong>) physically strengthens. Later, when you hear "dog", the electrical current naturally flows along the reinforced synaptic path directly to "Max". No sticky notes, no token lookup tables.
+              When two concepts activate simultaneously &mdash; for example, the concept of a <em>dog</em> and the name <em>"Max"</em> &mdash; the junction between those neurons (the <strong>synapse</strong>) physically strengthens. Later, when you hear "dog", the electrical current naturally flows along the reinforced synaptic path directly to "Max".
             </p>
           </div>
 
@@ -144,7 +144,7 @@
             Another major contender in the post-Transformer landscape is <strong>Mamba</strong>, which belongs to the family of <strong>State-Space Models (SSMs)</strong>. Born out of control systems engineering and signal processing, Mamba adopts a fundamentally different mindset from both Transformers and BDH.
           </p>
 
-          <div style="background: #0d1322; border: 1px solid #1e293b; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <div style="background: rgba(18, 30, 43, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin: 16px 0;">
             <div style="color: var(--accent-cyan); font-weight: 700; font-size: 0.85rem; margin-bottom: 8px; letter-spacing: 0.5px;">HOW MAMBA PROCESSES INFORMATION:</div>
             <p style="color: #cbd5e1; margin-bottom: 8px;">
               Imagine text as an audio stream passing through a microphone into an analog cassette tape. Mamba updates a compact, 1-dimensional hidden vector on every word:
@@ -188,7 +188,7 @@
             How does an AI model physically store <em>"Dog = Max"</em> without writing the English letters "D-O-G" into a text file? It converts words into geometric vectors and stamps them into an associative matrix!
           </p>
 
-          <div style="background: #0d1322; border: 1px solid #1e293b; border-radius: 8px; padding: 16px; margin: 14px 0;">
+          <div style="background: rgba(18, 30, 43, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin: 14px 0;">
             <div style="color: var(--accent-emerald); font-weight: 700; font-size: 0.85rem; margin-bottom: 6px;">OUR 2-FEATURE VECTOR UNIVERSE:</div>
             <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 8px;">
               Every concept is represented by 2 numbers: <strong>Feature 1 = Is it canine?</strong> &bull; <strong>Feature 2 = Is it a name?</strong>
@@ -253,7 +253,7 @@
             In physics and computer science, there is no such thing as a free lunch. If a fixed-size 16 KB matrix can process an infinite book without running out of RAM, <strong>what is the penalty? Why hasn't everyone abandoned Transformers already?</strong>
           </p>
 
-          <div style="background: #0d1322; border: 1px solid #1e293b; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <div style="background: rgba(18, 30, 43, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin: 16px 0;">
             <div style="color: var(--accent-amber); font-weight: 700; font-size: 0.85rem; margin-bottom: 8px; letter-spacing: 0.5px;">THE "OVERCROWDED WHITEBOARD" EFFECT (INTERFERENCE):</div>
             <p style="color: #cbd5e1; margin-bottom: 8px;">
               Picture a classroom whiteboard of fixed dimensions. If you write 3 phone numbers on it, there is plenty of whitespace, and every single digit is sharp and readable.
